@@ -13,6 +13,10 @@ GtkWidget *box2;
 GtkWidget *trash_can;
 GtkWidget *search_box;
 GtkWidget *search_button;
+GtkWidget *db;
+GtkWidget *file_system;
+GtkWidget *grid;
+GtkWidget *scroll;
 
 int current_widgets;
 
