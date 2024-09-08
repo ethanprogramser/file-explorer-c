@@ -17,6 +17,8 @@ GtkWidget *db;
 GtkWidget *file_system;
 GtkWidget *grid;
 GtkWidget *scroll;
+GtkWidget *back_button;
+GtkWidget *forward_button;
 
 int current_widgets;
 
@@ -43,7 +45,6 @@ struct values dirp(char *dirp) {
     }
     return val;
 }
-
 
 
 
