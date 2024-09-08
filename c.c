@@ -59,12 +59,16 @@ static void file_sys(GtkWidget *button, gpointer *b) {
     gtk_entry_set_text(GTK_ENTRY(search_box), "//");
 }
 
-//static void back_arrow(GtkWidget *widget, gpointer *d) {
-//    const gchar *p = gtk_entry_get_text(GTK_ENTRY(search_box)); 
-//    send();
-    
-//}
+static void back_arrow() {
+    fix();
+    char buffer[100];
+    for(int i=0;i<valvs - 1; i++) {
+        //strcat(buffer, files[i]);
+        //strcat(buffer, "/");
+    }
 
+
+}
 
 int main(int argc, char *argv[]) 
 {
@@ -115,7 +119,7 @@ int main(int argc, char *argv[])
     g_signal_connect(search_button, "clicked", G_CALLBACK(search_for),NULL);
     g_signal_connect(db, "clicked", G_CALLBACK(downloads), NULL);
     g_signal_connect(file_system,"clicked", G_CALLBACK(file_sys), NULL);
-
+    g_signal_connect(back_button, "clicked", G_CALLBACK(back_arrow),NULL);
     struct values r = dirp("/home/ethan/");
     create_and_contain(r);
     gtk_entry_set_text(GTK_ENTRY(search_box), "/home/ethan/");
