@@ -6,7 +6,7 @@
 #include<dirent.h>
 #include<string.h>
 
-GtkWidget *buttons[1000];
+GtkWidget *buttons[200];
 GtkWidget *window;
 GtkWidget *box;
 GtkWidget *button;
@@ -19,7 +19,6 @@ GtkWidget *file_system;
 GtkWidget *grid;
 GtkWidget *scroll;
 GtkWidget *back_button;
-GtkWidget *forward_button;
 
 int current_widgets;
 
@@ -50,6 +49,7 @@ struct values dirp(char *dirp) {
 
 void fix() {
     char buffer[100] = { 0 };
+    valvs = 0;
     const gchar *string = gtk_entry_get_text(GTK_ENTRY(search_box));
     strcat(buffer, string);
     char *token = strtok(buffer, "/");
@@ -58,7 +58,6 @@ void fix() {
         token = strtok(0, "/");
         valvs++;
     }
-    printf("%s\n", files[2]);
 }
 
 

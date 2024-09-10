@@ -61,13 +61,16 @@ static void file_sys(GtkWidget *button, gpointer *b) {
 
 static void back_arrow() {
     fix();
-    char buffer[100];
+    char buffer[100] = { 0 };
+    strcat(buffer, "/");
     for(int i=0;i<valvs - 1; i++) {
-        //strcat(buffer, files[i]);
-        //strcat(buffer, "/");
+        strcat(buffer, files[i]);
+        strcat(buffer, "/");
     }
-
-
+    struct values r = dirp(buffer);
+    send();
+    create_and_contain(r);
+    gtk_entry_set_text(GTK_ENTRY(search_box), buffer);
 }
 
 int main(int argc, char *argv[]) 
@@ -86,7 +89,6 @@ int main(int argc, char *argv[])
     search_button = gtk_button_new_with_label("search");
     scroll = gtk_scrolled_window_new(NULL, NULL);
     back_button = gtk_button_new_with_label("<");
-    forward_button = gtk_button_new_with_label(">");
     
 
     //setup scrollbar
@@ -106,8 +108,7 @@ int main(int argc, char *argv[])
 
     gtk_grid_attach(GTK_GRID(grid), search_box, 0, 0, 50, 10);
     gtk_grid_attach_next_to(GTK_GRID(grid), search_button, search_box, GTK_POS_RIGHT, 10,10);
-    gtk_grid_attach_next_to(GTK_GRID(grid), forward_button, search_box, GTK_POS_LEFT, 5, 10);
-    gtk_grid_attach_next_to(GTK_GRID(grid), back_button, forward_button, GTK_POS_LEFT, 5, 10);
+    gtk_grid_attach_next_to(GTK_GRID(grid), back_button, search_box, GTK_POS_LEFT, 10, 10);
     gtk_grid_attach_next_to(GTK_GRID(grid), scroll, search_box, GTK_POS_BOTTOM, 60, 70);
     gtk_grid_attach_next_to(GTK_GRID(grid), button, scroll, GTK_POS_LEFT, 10, 10);
     gtk_grid_attach_next_to(GTK_GRID(grid), db, button, GTK_POS_BOTTOM, 10, 10);
