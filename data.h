@@ -5,6 +5,9 @@
 #include<gtk/gtk.h>
 #include<dirent.h>
 #include<string.h>
+#include<sys/stat.h>
+#include<unistd.h>
+#include<stdbool.h>
 
 GtkWidget *buttons[200];
 GtkWidget *window;
@@ -19,7 +22,19 @@ GtkWidget *file_system;
 GtkWidget *grid;
 GtkWidget *scroll;
 GtkWidget *back_button;
+GtkWidget *make_directory;
+GtkWidget *entry_name;
+GtkWidget *entry_submit;
+GtkWidget *re_name;
+GtkWidget *del;
+GtkWidget *open;
 
+bool is_open = false;
+
+char current_file[100] = { 0 };
+char *files[100] =  { 0 };
+
+int valvs = 0;
 int current_widgets;
 
 struct values {
@@ -27,8 +42,12 @@ struct values {
     int valv;
 };
 
-char *files[100] =  { 0 };
-int valvs = 0;
+
+int is_folder(const char *path) {
+    struct stat pather;
+    stat(path, &pather);
+    return S_ISDIR(pather.st_mode);
+}
 
 struct values dirp(char *dirp) {
     struct values val;
