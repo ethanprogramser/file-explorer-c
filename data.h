@@ -28,6 +28,8 @@ GtkWidget *entry_submit;
 GtkWidget *re_name;
 GtkWidget *del;
 GtkWidget *open;
+GtkWidget *vlc;
+GtkWidget *vim;
 
 bool is_open = false;
 

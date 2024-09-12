@@ -12,14 +12,19 @@
 
 
 void send() {
-    if(is_open) {
-      gtk_widget_destroy(re_name);
-      gtk_widget_destroy(del);
-      gtk_widget_destroy(open);
-      is_open = false;
-    }
     gtk_container_foreach(GTK_CONTAINER(box2), (void*) gtk_widget_destroy, NULL);
     current_widgets = 0;
+}
+
+void destroy_all() {
+  if(is_open) {
+    gtk_widget_destroy(re_name);
+    gtk_widget_destroy(del);
+    gtk_widget_destroy(open);
+    gtk_widget_destroy(vlc);
+    gtk_widget_destroy(vim);
+    is_open = false;
+  }  
 }
 
 static void del_file(GtkWidget *butt, gpointer *pr)  
@@ -32,24 +37,90 @@ static void del_file(GtkWidget *butt, gpointer *pr)
     strcat(buffer, current_file);
 
     unlink(buffer);
+    printf("%s\n", buffer);
 
     send();
 
     gtk_widget_show_all(window); 
 }
 
-static void open_file(GtkWidget *button, gpointer *pr) 
-{
+static void renamer(GtkWidget *button, gpointer *dp) {
+    char buffer[100] = { 0 };
+    char buffer2[100] = { 0 };
+  
+    const gchar *l = gtk_entry_get_text(GTK_ENTRY(search_box));
+    const gchar *r = gtk_entry_get_text(GTK_ENTRY(entry_name));
+        
+    gtk_widget_set_halign(entry_name, GTK_ALIGN_END);
+    gtk_widget_set_halign(entry_submit, GTK_ALIGN_END);
+    gtk_widget_set_valign(entry_submit, GTK_ALIGN_END);
+    gtk_widget_set_valign(entry_name, GTK_ALIGN_END);
+
+    strcat(buffer, l);
+    strcat(buffer, current_file);
+
+    strcat(buffer2, l);
+    strcat(buffer2, r);
+
+    printf("%s\n %s\n", buffer, buffer2);
+
+    rename(buffer, buffer2);
+
+    gtk_widget_destroy(entry_name);
+    gtk_widget_destroy(entry_submit);
 
 }
 
 static void rename_file(GtkWidget *button, gpointer *pr) 
 {
+    entry_name = gtk_entry_new();
+    entry_submit = gtk_button_new_with_label("create");
 
+    gtk_grid_attach_next_to(GTK_GRID(grid), entry_name, trash_can, GTK_POS_BOTTOM, 20, 20);
+    gtk_grid_attach_next_to(GTK_GRID(grid), entry_submit, entry_name, GTK_POS_BOTTOM, 20, 20);
+
+    g_signal_connect(entry_submit, "clicked", G_CALLBACK(renamer), NULL);
+    gtk_widget_show_all(window);
+}
+
+static void vip(GtkWidget *button, gpointer *gb) {
+    char buffer[100] = { 0 };
+    char systembuffer[100] = { 0 };
+    const gchar *i = gtk_entry_get_text(GTK_ENTRY(search_box));
+    strcat(buffer, i);
+    strcat(buffer, current_file);
+    strcat(systembuffer, "kitty nvim ");
+    strcat(systembuffer, buffer);
+    system(systembuffer);
+}
+
+static void vlp(GtkWidget *buffon, gpointer *data) {
+    char buffer[100] = { 0 };
+    char systembuffer[100] = { 0 };
+    const gchar *r = gtk_entry_get_text(GTK_ENTRY(search_box));
+    strcat(buffer, r);
+    strcat(buffer, current_file);
+    strcat(systembuffer, "vlc-wrapper ");
+    strcat(systembuffer, buffer);
+    system(systembuffer);
+}
+
+static void open_file(GtkWidget *button, gpointer *pr) 
+{
+    vim = gtk_button_new_with_label("open with vim");
+    vlc = gtk_button_new_with_label("open with vlc");
+
+    gtk_grid_attach_next_to(GTK_GRID(grid), vim, trash_can, GTK_POS_BOTTOM, 10, 10);
+    gtk_grid_attach_next_to(GTK_GRID(grid), vlc, vim, GTK_POS_BOTTOM, 10, 10);    
+    g_signal_connect(vim, "clicked", G_CALLBACK(vip), NULL);
+    g_signal_connect(vlc, "clicked", G_CALLBACK(vlp), NULL);
+
+    gtk_widget_show_all(window);
 }
 
 
 static void open_or_press(GtkWidget *button, gpointer *pr) {
+    destroy_all();
     const gchar *lr = gtk_button_get_label(GTK_BUTTON(button));
     strcpy(current_file, lr);
     printf("%s\n", current_file);
@@ -93,7 +164,9 @@ static void open_or_press(GtkWidget *button, gpointer *pr) {
     gtk_widget_show_all(window);
 }
 
-void create_and_contain(struct values val) {
+void create_and_contain(struct values val) 
+{
+    destroy_all();
     for(int i=0; i<val.valv-1;i++) {
         buttons[i] = gtk_button_new_with_label(val.files[i]);
         gtk_container_add(GTK_CONTAINER(box2), buttons[i]);
@@ -114,17 +187,17 @@ void reload()
 }
 
 static void home(GtkWidget *button, gpointer *data) {
-    struct values r = dirp("/home/ethan");
+    struct values r = dirp("/home/ethan/");
     send();
     create_and_contain(r);
     gtk_entry_set_text(GTK_ENTRY(search_box), "/home/ethan/");
 }
 
 static void trash(GtkWidget *button, gpointer *data) {
-    struct values r = dirp("/home/ethan/.local/share/Trash");
+    struct values r = dirp("/home/ethan/.local/share/Trash/");
     send();
     create_and_contain(r);
-    gtk_entry_set_text(GTK_ENTRY(search_box), "/home/ethan/.local/share/Trash");
+    gtk_entry_set_text(GTK_ENTRY(search_box), "/home/ethan/.local/share/Trash/");
 }
 
 static void search_for(GtkWidget *button, gpointer *d) {
@@ -140,11 +213,11 @@ static void search_for(GtkWidget *button, gpointer *d) {
 }
 
 static void downloads(GtkWidget *buttons, gpointer *R) {
-    struct values r = dirp("/home/ethan/Downloads");
+    struct values r = dirp("/home/ethan/Downloads/");
     send();
     create_and_contain(r);
     
-    gtk_entry_set_text(GTK_ENTRY(search_box), "/home/ethan/Downloads");
+    gtk_entry_set_text(GTK_ENTRY(search_box), "/home/ethan/Downloads/");
 }
 
 static void file_sys(GtkWidget *button, gpointer *b) {
